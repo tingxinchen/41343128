@@ -1,0 +1,4 @@
+# Hashes of file build rules.
+ec6dc40396ced5f9409d879949eb3936 BeautifulUI_autogen/3YJK5W5UP7/qrc_resources.cpp
+a8b43757d9bbedf50ae42823b4068900 BeautifulUI_autogen/timestamp
+78c4b482a01f882ada4938693bc66079 CMakeFiles/BeautifulUI_autogen

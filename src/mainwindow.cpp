@@ -2,6 +2,7 @@
 #include <QGraphicsDropShadowEffect>
 #include <QFont>
 #include <QMessageBox>
+#include <QFile>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -335,204 +336,21 @@ void MainWindow::createProfilePage()
 
 void MainWindow::applyStyles()
 {
-    QString styleSheet = R"(
-        /* Main window */
-        QMainWindow {
-            background-color: #f5f7fa;
-        }
+    QFile styleFile(":/style.qss");
+    if (styleFile.open(QFile::ReadOnly | QFile::Text)) {
+        QString styleSheet = styleFile.readAll();
+        styleFile.close();
+        setStyleSheet(styleSheet);
+    }
+}
 
-        /* Sidebar */
-        #sidebar {
-            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                stop:0 #667eea, stop:1 #764ba2);
-            border: none;
-        }
-
-        #logoLabel {
-            color: white;
-            padding: 10px;
-        }
-
-        #navButton {
-            background-color: transparent;
-            color: rgba(255, 255, 255, 0.8);
-            border: none;
-            border-radius: 10px;
-            padding: 15px 20px;
-            text-align: left;
-            font-size: 14px;
-        }
-
-        #navButton:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: white;
-        }
-
-        #navButton[active="true"] {
-            background-color: rgba(255, 255, 255, 0.25);
-            color: white;
-        }
-
-        #versionLabel {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 12px;
-        }
-
-        /* Content area */
-        #contentStack, #contentPage {
-            background-color: #f5f7fa;
-        }
-
-        #headerLabel {
-            color: #2d3748;
-        }
-
-        /* Stats cards */
-        #statsCard {
-            background-color: white;
-            border-radius: 15px;
-            padding: 25px;
-            border-left: 5px solid #667eea;
-        }
-
-        #statsCard[accent="green"] {
-            border-left-color: #48bb78;
-        }
-
-        #statsCard[accent="purple"] {
-            border-left-color: #9f7aea;
-        }
-
-        #cardValue {
-            color: #2d3748;
-        }
-
-        #cardLabel {
-            color: #718096;
-            font-size: 14px;
-        }
-
-        /* Section titles */
-        #sectionTitle {
-            color: #4a5568;
-        }
-
-        /* Progress bar */
-        #styledProgress {
-            border: none;
-            border-radius: 12px;
-            background-color: #e2e8f0;
-            text-align: center;
-        }
-
-        #styledProgress::chunk {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #667eea, stop:1 #764ba2);
-            border-radius: 12px;
-        }
-
-        /* Primary button */
-        #primaryButton {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #667eea, stop:1 #764ba2);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 12px 30px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        #primaryButton:hover {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #5a67d8, stop:1 #6b46c1);
-        }
-
-        #primaryButton:pressed {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #4c51bf, stop:1 #553c9a);
-        }
-
-        /* Secondary button */
-        #secondaryButton {
-            background-color: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-            border-radius: 12px;
-            padding: 12px 30px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        #secondaryButton:hover {
-            background-color: #667eea;
-            color: white;
-        }
-
-        /* Recent list */
-        #recentList {
-            background-color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 10px;
-            outline: none;
-        }
-
-        #recentList::item {
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin: 3px 5px;
-        }
-
-        #recentList::item:hover {
-            background-color: #edf2f7;
-        }
-
-        #recentList::item:selected {
-            background-color: #e9d8fd;
-            color: #553c9a;
-        }
-
-        /* Settings card */
-        #settingsCard {
-            background-color: white;
-            border-radius: 15px;
-            padding: 30px;
-        }
-
-        #settingsLabel {
-            color: #2d3748;
-        }
-
-        #settingsDesc {
-            color: #718096;
-            margin-bottom: 20px;
-        }
-
-        /* Profile card */
-        #profileCard {
-            background-color: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 400px;
-        }
-
-        #profileName {
-            color: #2d3748;
-        }
-
-        #profileRole {
-            color: #667eea;
-            font-size: 16px;
-        }
-
-        #profileEmail {
-            color: #718096;
-            font-size: 14px;
-        }
-    )";
-
-    setStyleSheet(styleSheet);
+void MainWindow::refreshButtonStyles()
+{
+    QList<QPushButton*> navButtons = {dashboardBtn, settingsBtn, profileBtn};
+    for (QPushButton *btn : navButtons) {
+        btn->style()->unpolish(btn);
+        btn->style()->polish(btn);
+    }
 }
 
 void MainWindow::onNavigationClicked()
@@ -557,12 +375,7 @@ void MainWindow::onNavigationClicked()
     }
 
     // Force style refresh
-    dashboardBtn->style()->unpolish(dashboardBtn);
-    dashboardBtn->style()->polish(dashboardBtn);
-    settingsBtn->style()->unpolish(settingsBtn);
-    settingsBtn->style()->polish(settingsBtn);
-    profileBtn->style()->unpolish(profileBtn);
-    profileBtn->style()->polish(profileBtn);
+    refreshButtonStyles();
 }
 
 void MainWindow::onPrimaryButtonClicked()

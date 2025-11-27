@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QLabel>
-#include <QLineEdit>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QFrame>
@@ -33,6 +32,7 @@ private:
     void createDashboardPage();
     void createSettingsPage();
     void createProfilePage();
+    void refreshButtonStyles();
 
     // Sidebar
     QFrame *sidebarFrame;
